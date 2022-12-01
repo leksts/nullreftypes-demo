@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace NullRefTypesDemo.Domain;
 
 public class Order
@@ -14,10 +16,7 @@ public class Order
     protected Order() { }
 
     public IEnumerable<OrderLine> OrderLines =>
-        _orderLines
-        ?? throw new InvalidOperationException(
-            $"Accessing uninitialized property '{nameof(OrderLines)}'"
-        );
+        _orderLines ?? throw ThrowHelper.UninitializedProperty();
 }
 
 public class OrderLine
@@ -28,4 +27,16 @@ public class OrderLine
     }
 
     public string ProductName { get; }
+}
+
+internal static class ThrowHelper
+{
+    public static InvalidOperationException UninitializedProperty(
+        [CallerMemberName] string? propertyName = null
+    )
+    {
+        return new InvalidOperationException(
+            $"Accessing uninitialized property '{propertyName}'. Did you forget to include the relation when querying the DbContext?"
+        );
+    }
 }
