@@ -4,11 +4,17 @@ public class Consumer
 {
     public void DoWork()
     {
-        Dto dto = GetDto();
+        Dto? dto = GetDto();
+
+        if (dto is null)
+        {
+            throw new InvalidOperationException("We made a booboo");
+        }
+
         Service service = new(dto);
     }
 
-    private Dto GetDto()
+    private Dto? GetDto()
     {
         if (new Random().Next(0, 1) == 1)
         {
